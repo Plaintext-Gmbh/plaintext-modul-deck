@@ -1,0 +1,97 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="/includes/template.xhtml">
+    <!-- Karte 2162, Soll 2: der Chat und die Schreibgrafik.
+         Links die Agenten, in der Mitte der Verlauf, rechts "wer schreibt wie viel an wen".
+         Die Balkenbreite kommt als CSS-Klasse (deck-balken-NN), nicht als style="width:..%":
+         Inline-Styles sind im Projekt die begruendete Ausnahme (Massnahme 13).
+         Kein EL in Kommentaren (Facelets wertet es aus, Karte 859). -->
+
+    <f:metadata>
+        <f:viewAction action="#{deckChatBean.laden}"/>
+    </f:metadata>
+
+    <ui:define name="title">Deck – Chat</ui:define>
+
+    <ui:define name="content">
+        <h:outputStylesheet library="deck" name="deck.css"/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <h:panelGroup layout="block" styleClass="deck-fehler" rendered="#{not empty deckChatBean.fehler}">
+                #{deckChatBean.fehler}
+            </h:panelGroup>
+
+            <div class="deck-rahmen-chat">
+
+                <!-- Wer ist da. -->
+                <aside class="deck-agenten" aria-label="Agenten">
+                    <h2 class="deck-abschnitt">Agenten (#{deckChatBean.agenten.size()})</h2>
+                    <h:panelGroup layout="block" styleClass="deck-leer"
+                                  rendered="#{empty deckChatBean.agenten}">
+                        Noch niemand hat geschrieben.
+                    </h:panelGroup>
+                    <ul class="deck-agenten-liste">
+                        <ui:repeat value="#{deckChatBean.agenten}" var="a">
+                            <li class="deck-agent">#{a}</li>
+                        </ui:repeat>
+                    </ul>
+                </aside>
+
+                <section class="deck-verlauf" aria-label="Verlauf">
+                    <div class="deck-senden">
+                        <p:selectOneMenu value="#{deckChatBean.empfaenger}" styleClass="deck-empfaenger"
+                                         ariaLabel="Empfänger">
+                            <f:selectItem itemLabel="an …" noSelectionOption="true"/>
+                            <f:selectItems value="#{deckChatBean.agentenAuswahl}" var="a"
+                                           itemLabel="#{a}" itemValue="#{a}"/>
+                        </p:selectOneMenu>
+                        <p:inputText value="#{deckChatBean.text}" placeholder="Nachricht"
+                                     ariaLabel="Nachricht" styleClass="deck-eingabe"/>
+                        <p:commandButton value="Senden" action="#{deckChatBean.senden}"
+                                         update="fm" styleClass="deck-knopf"/>
+                    </div>
+
+                    <h2 class="deck-abschnitt">Verlauf (#{deckChatBean.verlauf.size()})</h2>
+                    <h:panelGroup layout="block" styleClass="deck-leer"
+                                  rendered="#{empty deckChatBean.verlauf}">
+                        Noch keine Nachrichten.
+                    </h:panelGroup>
+                    <ui:repeat value="#{deckChatBean.verlauf}" var="n">
+                        <div class="deck-nachricht deck-nachricht-#{n.art}">
+                            <div class="deck-nachricht-kopf">
+                                <span class="deck-nachricht-von">#{n.von}</span>
+                                <span class="deck-nachricht-pfeil">→</span>
+                                <span class="deck-nachricht-an">#{n.an}</span>
+                                <span class="deck-nachricht-art">#{n.art}</span>
+                            </div>
+                            <div class="deck-nachricht-text">#{n.text}</div>
+                        </div>
+                    </ui:repeat>
+                </section>
+
+                <!-- Soll 2: die Grafik. -->
+                <aside class="deck-grafik" aria-label="Wer schreibt wie viel an wen">
+                    <h2 class="deck-abschnitt">Wer schreibt wie viel an wen</h2>
+                    <h:panelGroup layout="block" styleClass="deck-leer"
+                                  rendered="#{empty deckChatBean.grafik}">
+                        Noch keine Zahlen.
+                    </h:panelGroup>
+                    <ui:repeat value="#{deckChatBean.grafik}" var="z">
+                        <div class="deck-grafik-zeile">
+                            <div class="deck-grafik-paar">#{z.von} → #{z.an}</div>
+                            <div class="deck-grafik-balken">
+                                <span class="deck-grafik-fuellung deck-balken-#{z.stufe()}"></span>
+                            </div>
+                            <div class="deck-grafik-zahl">#{z.anzahl}</div>
+                        </div>
+                    </ui:repeat>
+                </aside>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

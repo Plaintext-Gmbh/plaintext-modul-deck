@@ -1,0 +1,382 @@
+/* Karte 2162, Soll 1: Board-Stil.
+ *
+ * Die Datei liegt neben der Seite unter META-INF/resources/deck/deck.css und wird darum mit
+ * <h:outputStylesheet library="deck" name="deck.css"/> eingebunden. Bewusst eigenes Stylesheet statt
+ * style="…" an den Elementen: Inline-Styles laufen in die Sperrklinke (Massnahme 13), und die
+ * Stapelfarben sind an mehr als einer Stelle gemeint.
+ *
+ * Keine @media-Bloecke in dieser Datei — die Sperrklinke KeinInlineMediaQueryVertragTest prueft
+ * Seiten, und mobile Stapelung macht das Grid von selbst. */
+
+.deck-rahmen {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.deck-rueckfragen {
+    border: 1px solid var(--pt-rand, #d8dee9);
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff8e1;
+}
+
+.deck-abschnitt {
+    font-size: 0.95em;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+.deck-leer {
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.deck-rueckfrage {
+    border-top: 1px solid #e5e7eb;
+    padding: 8px 0;
+}
+
+.deck-rueckfrage-titel {
+    font-size: 0.9em;
+    margin-bottom: 6px;
+}
+
+.deck-anlegen {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.deck-eingabe {
+    flex: 1;
+    min-height: 40px;
+}
+
+.deck-stapel-reihe {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    align-items: start;
+}
+
+.deck-stapel {
+    background: #f4f6f8;
+    border-radius: 12px;
+    padding: 10px;
+    min-height: 120px;
+}
+
+.deck-stapel-kopf {
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #475569;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.deck-anzahl {
+    background: #e2e8f0;
+    border-radius: 10px;
+    padding: 0 8px;
+    font-weight: 500;
+}
+
+/* Eine Karte: farbiger Streifen links in der Statusfarbe, daneben der Inhalt. */
+.deck-karte {
+    display: flex;
+    gap: 8px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.deck-karte-streifen {
+    width: 6px;
+    flex: 0 0 6px;
+    background: #94a3b8;
+}
+
+.deck-stapel-vorrat .deck-karte-streifen { background: #94a3b8; }
+.deck-stapel-backlog .deck-karte-streifen { background: #60a5fa; }
+.deck-stapel-todo .deck-karte-streifen { background: #a78bfa; }
+.deck-stapel-inprogress .deck-karte-streifen { background: #fbbf24; }
+.deck-stapel-done .deck-karte-streifen { background: #34d399; }
+
+/* Wo Daniel beitragen muss, ueberstimmt die Marke die Statusfarbe: breiter Streifen und Rahmen. */
+.deck-karte-interaktiv .deck-karte-streifen { background: #2563eb; width: 10px; flex-basis: 10px; }
+.deck-karte-interaktiv { box-shadow: 0 0 0 2px #2563eb; }
+.deck-karte-rueckfrage .deck-karte-streifen { background: #dc2626; width: 10px; flex-basis: 10px; }
+.deck-karte-rueckfrage { box-shadow: 0 0 0 2px #dc2626; }
+
+.deck-karte-inhalt {
+    padding: 8px 10px 8px 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.deck-karte-titel {
+    font-size: 0.92em;
+    line-height: 1.3;
+    word-break: break-word;
+    color: inherit;
+    text-decoration: none;
+    display: block;
+}
+
+.deck-karte-titel:hover {
+    text-decoration: underline;
+}
+
+.deck-karte-marken {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.deck-marke {
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.deck-marke-interaktiv {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.deck-marke-label {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.deck-marke-rueckfrage {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.deck-karte-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75em;
+    color: #64748b;
+    margin-top: 6px;
+}
+
+.deck-fehler {
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+}
+
+/* ── Soll 2: Chat und Schreibgrafik ─────────────────────────────────────────── */
+.deck-rahmen-chat {
+    display: grid;
+    grid-template-columns: minmax(160px, 200px) 1fr minmax(260px, 380px);
+    gap: 20px;
+    align-items: start;
+}
+
+.deck-agenten {
+    border: 1px solid var(--pt-rand, #d8dee9);
+    border-radius: 10px;
+    padding: 12px;
+    background: #f8fafc;
+}
+
+.deck-agenten-liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.deck-agent {
+    padding: 4px 0;
+    font-size: 0.9em;
+    border-top: 1px solid #e5e7eb;
+}
+
+.deck-agent:first-child {
+    border-top: none;
+}
+
+.deck-verlauf {
+    min-width: 0;
+}
+
+.deck-senden {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.deck-empfaenger {
+    min-width: 130px;
+}
+
+.deck-nachricht {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-left: 4px solid #94a3b8;
+}
+
+/* Die drei Arten sind an der Kante unterscheidbar: Zuweisung, Reaktion, direkte Nachricht.
+   Ohne die Farbe müsste man drei Textzeilen lesen, um zu sehen, was das ist. */
+.deck-nachricht-ZUWEISUNG { border-left-color: #a78bfa; }
+.deck-nachricht-REAKTION  { border-left-color: #fbbf24; }
+.deck-nachricht-DIREKT    { border-left-color: #60a5fa; }
+
+.deck-nachricht-kopf {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    font-size: 0.8em;
+    color: #475569;
+}
+
+.deck-nachricht-von {
+    font-weight: 600;
+}
+
+.deck-nachricht-art {
+    margin-left: auto;
+    font-size: 0.9em;
+    text-transform: lowercase;
+    color: #94a3b8;
+}
+
+.deck-nachricht-text {
+    margin-top: 4px;
+    font-size: 0.92em;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.deck-grafik {
+    border: 1px solid var(--pt-rand, #d8dee9);
+    border-radius: 10px;
+    padding: 12px;
+    background: #f8fafc;
+}
+
+.deck-grafik-zeile {
+    display: grid;
+    grid-template-columns: 1fr 60px 34px;
+    gap: 8px;
+    align-items: center;
+    padding: 3px 0;
+    font-size: 0.85em;
+}
+
+.deck-grafik-paar {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.deck-grafik-balken {
+    background: #e2e8f0;
+    border-radius: 3px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.deck-grafik-fuellung {
+    display: block;
+    height: 100%;
+    background: #3b82f6;
+}
+
+.deck-grafik-zahl {
+    text-align: right;
+    color: #475569;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Die Balkenbreiten in Fünferschritten, siehe SchreibZeile.stufe().
+   Warum nicht style="width:..%": Inline-Styles sind im Projekt die begruendete Ausnahme
+   (Massnahme 13), und ein Diagramm ist kein Grund dafuer. */
+.deck-balken-0   { width: 0; }
+.deck-balken-5   { width: 5%; }
+.deck-balken-10  { width: 10%; }
+.deck-balken-15  { width: 15%; }
+.deck-balken-20  { width: 20%; }
+.deck-balken-25  { width: 25%; }
+.deck-balken-30  { width: 30%; }
+.deck-balken-35  { width: 35%; }
+.deck-balken-40  { width: 40%; }
+.deck-balken-45  { width: 45%; }
+.deck-balken-50  { width: 50%; }
+.deck-balken-55  { width: 55%; }
+.deck-balken-60  { width: 60%; }
+.deck-balken-65  { width: 65%; }
+.deck-balken-70  { width: 70%; }
+.deck-balken-75  { width: 75%; }
+.deck-balken-80  { width: 80%; }
+.deck-balken-85  { width: 85%; }
+.deck-balken-90  { width: 90%; }
+.deck-balken-95  { width: 95%; }
+.deck-balken-100 { width: 100%; }
+
+/* ── Soll 1: Detail der Karte und Antwortfeld ───────────────────────────────── */
+
+.deck-detail {
+    margin-top: 20px;
+    border: 1px solid var(--pt-rand, #d8dee9);
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff;
+}
+
+.deck-beitrag {
+    border-left: 3px solid #cbd5e1;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    border-radius: 0 6px 6px 0;
+}
+
+.deck-beitrag-RUECKFRAGE { border-left-color: #ef4444; }
+.deck-beitrag-ANTWORT    { border-left-color: #22c55e; }
+.deck-beitrag-KOMMENTAR  { border-left-color: #94a3b8; }
+
+.deck-beitrag-kopf {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 0.78em;
+    color: #64748b;
+}
+
+.deck-beitrag-autor {
+    font-weight: 600;
+    color: #334155;
+}
+
+.deck-beitrag-text {
+    font-size: 0.9em;
+    line-height: 1.35;
+    margin-top: 2px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.deck-antwort {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 12px;
+}

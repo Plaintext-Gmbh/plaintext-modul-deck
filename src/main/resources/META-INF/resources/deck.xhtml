@@ -1,0 +1,118 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                template="/includes/template.xhtml">
+    <!-- Karte 2162, Soll 1: das Brett. Fuenf Stapel nebeneinander, je Karte ein Streifen in der
+         Statusfarbe; Interaktiv und Rueckfrage sind zusaetzlich als Marke am Kopf der Karte
+         sichtbar. Die Rueckfragen stehen rechts in einem eigenen Panel, damit Daniel sie ohne
+         Suchen findet. Kein EL in Kommentaren (Facelets wertet es aus, Karte 859). -->
+
+    <f:metadata>
+        <f:viewAction action="#{deckBoardBean.laden}"/>
+    </f:metadata>
+
+    <ui:define name="title">Deck</ui:define>
+
+    <ui:define name="content">
+        <h:outputStylesheet library="deck" name="deck.css"/>
+
+        <h:form id="fm">
+            <input type="hidden" name="_csrf" value="#{_csrf.token}"/>
+
+            <h:panelGroup layout="block" styleClass="deck-fehler" rendered="#{not empty deckBoardBean.fehler}">
+                #{deckBoardBean.fehler}
+            </h:panelGroup>
+
+            <div class="deck-rahmen">
+
+                <!-- Rueckfrage-Panel: was auf Daniel wartet, vor dem Brett. -->
+                <aside class="deck-rueckfragen" aria-label="Offene Rückfragen">
+                    <h2 class="deck-abschnitt">Offene Rückfragen (#{deckBoardBean.offeneRueckfragen.size()})</h2>
+                    <h:panelGroup layout="block" styleClass="deck-leer"
+                                  rendered="#{empty deckBoardBean.offeneRueckfragen}">
+                        Nichts offen.
+                    </h:panelGroup>
+                    <ui:repeat value="#{deckBoardBean.offeneRueckfragen}" var="k">
+                        <div class="deck-rueckfrage">
+                            <div class="deck-rueckfrage-titel">#{k.titel}</div>
+                            <p:commandButton value="Öffnen" action="#{deckBoardBean.oeffnen(k.id)}"
+                                             update="fm" styleClass="deck-knopf-klein" ajax="true"/>
+                        </div>
+                    </ui:repeat>
+                </aside>
+
+                <!-- Das Brett. -->
+                <section class="deck-brett" aria-label="Board">
+                    <div class="deck-anlegen">
+                        <p:inputText value="#{deckBoardBean.neuerTitel}" placeholder="Titel der neuen Karte"
+                                     ariaLabel="Titel der neuen Karte" styleClass="deck-eingabe"/>
+                        <p:commandButton value="Karte anlegen" action="#{deckBoardBean.anlegen}"
+                                         update="fm" styleClass="deck-knopf"/>
+                    </div>
+
+                    <div class="deck-stapel-reihe">
+                        <ui:repeat value="#{deckBoardBean.board.entrySet()}" var="eintrag">
+                            <div class="deck-stapel">
+                                <div class="deck-stapel-kopf">
+                                    #{eintrag.key.code()} <span class="deck-anzahl">#{eintrag.value.size()}</span>
+                                </div>
+                                <ui:repeat value="#{eintrag.value}" var="k">
+                                    <div class="deck-karte deck-stapel-#{eintrag.key.code()}#{k.rueckfrage ? ' deck-karte-rueckfrage' : ''}#{k.interaktiv ? ' deck-karte-interaktiv' : ''}">
+                                        <div class="deck-karte-streifen"></div>
+                                        <div class="deck-karte-inhalt">
+                                            <p:commandLink action="#{deckBoardBean.oeffnen(k.id)}"
+                                                           update="fm" styleClass="deck-karte-titel">
+                                                #{k.titel}
+                                            </p:commandLink>
+                                            <div class="deck-karte-marken">
+                                                <ui:fragment rendered="#{k.interaktiv}"><span class="deck-marke deck-marke-interaktiv">Interaktiv</span></ui:fragment>
+                                                <ui:fragment rendered="#{k.rueckfrage}"><span class="deck-marke deck-marke-rueckfrage">Rückfrage</span></ui:fragment>
+                                                <ui:repeat value="#{deckBoardBean.labelsOhneMarken(k)}" var="l"><span class="deck-marke deck-marke-label">#{l}</span></ui:repeat>
+                                            </div>
+                                            <div class="deck-karte-meta">
+                                                <span class="deck-karte-nr">#{k.id}</span>
+                                                <ui:fragment rendered="#{not empty k.bearbeiter}"><span class="deck-karte-bearbeiter">#{k.bearbeiter}</span></ui:fragment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Detail der geoeffneten Karte und das Antwortfeld der Rueckfrage.
+                 Nur sichtbar, wenn eine Karte offen ist: ein leeres Panel waere Rauschen.
+                 h:panelGroup statt eines HTML-Elements mit rendered: ein nacktes Element kennt
+                 kein rendered, Facelets schriebe das Attribut ungeprueft in die Seite. -->
+            <h:panelGroup layout="block" styleClass="deck-detail"
+                          rendered="#{not empty deckBoardBean.offeneKarte}">
+                <h2 class="deck-abschnitt">Karte #{deckBoardBean.offeneKarte}</h2>
+
+                <h:panelGroup layout="block" styleClass="deck-leer" rendered="#{empty deckBoardBean.beitraege}">
+                    Noch kein Beitrag.
+                </h:panelGroup>
+                <ui:repeat value="#{deckBoardBean.beitraege}" var="b">
+                    <div class="deck-beitrag deck-beitrag-#{b.art}">
+                        <div class="deck-beitrag-kopf">
+                            <span class="deck-beitrag-autor">#{b.autor}</span>
+                            <span class="deck-beitrag-art">#{b.art}</span>
+                        </div>
+                        <div class="deck-beitrag-text">#{b.text}</div>
+                    </div>
+                </ui:repeat>
+
+                <div class="deck-antwort">
+                    <p:inputTextarea value="#{deckBoardBean.antwort}" rows="3"
+                                     placeholder="Antwort an den Agenten"
+                                     ariaLabel="Antwort an den Agenten" styleClass="deck-eingabe"/>
+                    <p:commandButton value="Antwort senden" action="#{deckBoardBean.antworten}"
+                                     update="fm" styleClass="deck-knopf"/>
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </ui:define>
+</ui:composition>
