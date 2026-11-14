@@ -79,10 +79,7 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>plaintext-nas</id>
-            <url>https://maven.plaintext.ch/releases</url>
-        </repository>
+        <!-- plaintext-root-v2 und dieses Modul liegen im Plaintext-Maven-Repo auf GitHub Packages. -->
         <repository>
             <id>plaintext</id>
             <url>https://maven.pkg.github.com/Plaintext-Gmbh/plaintext-mvn</url>
@@ -91,8 +88,8 @@
 
     <distributionManagement>
         <repository>
-            <id>plaintext-nas</id>
-            <url>https://maven.plaintext.ch/releases</url>
+            <id>plaintext</id>
+            <url>https://maven.pkg.github.com/Plaintext-Gmbh/plaintext-mvn</url>
         </repository>
     </distributionManagement>
 </project>

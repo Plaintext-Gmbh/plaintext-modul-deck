@@ -58,4 +58,4 @@ mvn verify
 ```
 
 Der Parent ist `plaintext-root-parent`; alle root-Teile sind `provided`. Release per Git-Tag
-`X.Y.Z` (Woodpecker, `ci/release.sh`) nach Reposilite `maven.plaintext.ch/releases`.
+`X.Y.Z` (Woodpecker, `ci/release.sh`) nach GitHub Packages `Plaintext-Gmbh/plaintext-mvn`.

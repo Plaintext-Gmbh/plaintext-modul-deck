@@ -1,4 +1,4 @@
-# Release per Git-Tag X.Y.Z nach Reposilite (maven.plaintext.ch), Karte 2162.
+# Release per Git-Tag X.Y.Z nach GitHub Packages (plaintext-mvn), Karte 2162.
 # Der Tag IST die Version; gepusht hat ihn, wer taggt. Die POM-Version wird nur im
 # Arbeitsbaum gesetzt, nie committet (main bleibt auf X.Y.Z-SNAPSHOT).
 when:
@@ -8,9 +8,7 @@ steps:
   release:
     image: maven:3.10-eclipse-temurin-25
     environment:
-      # server-id `plaintext-nas` (Reposilite, distributionManagement im pom).
-      MVN_DEPLOY_USER:
-        from_secret: mvn_deploy_user
+      # server-id `plaintext` (GitHub Packages, distributionManagement im pom).
       MVN_DEPLOY_TOKEN:
         from_secret: mvn_deploy_token
     commands:
