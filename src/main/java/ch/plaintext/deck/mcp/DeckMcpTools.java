@@ -197,6 +197,47 @@ public class DeckMcpTools {
         }
     }
 
+    @McpTool(name = "deck_anlegen",
+            description = "Legt eine Karte an. Stapel vorrat, backlog, todo, inprogress oder done (leer = backlog), "
+                    + "Labels kommagetrennt; das Label Interaktiv setzt die Marke Interaktiv.")
+    @PreAuthorize("hasAuthority('SCOPE_WRITE')")
+    public String anlegen(
+            @McpToolParam(description = "Titel der Karte", required = true) String titel,
+            @McpToolParam(description = "Beschreibung", required = false) String beschreibung,
+            @McpToolParam(description = "vorrat, backlog, todo, inprogress oder done; leer = backlog", required = false) String stapel,
+            @McpToolParam(description = "Priorität, höher = weiter oben; leer = 0", required = false) Integer prio,
+            @McpToolParam(description = "Labels kommagetrennt, z.B. dev, Interaktiv", required = false) String labels) {
+        try {
+            if (titel == null || titel.isBlank()) {
+                return "FEHLER: Ohne Titel lässt sich keine Karte anlegen.";
+            }
+            DeckStapel s = stapel == null || stapel.isBlank() ? DeckStapel.BACKLOG : DeckStapel.von(stapel);
+            DeckKarte k = service.anlegen(titel.strip(), beschreibung, s, prio == null ? 0 : prio, labels);
+            return "OK: Karte " + k.getId() + " in " + k.getStapel().code() + " angelegt.";
+        } catch (IllegalArgumentException e) {
+            return "FEHLER: " + e.getMessage();
+        }
+    }
+
+    @McpTool(name = "deck_label",
+            description = "Setzt oder entfernt ein Label einer Karte. Das Label Interaktiv schaltet die Marke Interaktiv.")
+    @PreAuthorize("hasAuthority('SCOPE_WRITE')")
+    public String label(
+            @McpToolParam(description = "Id der Karte", required = true) Long karteId,
+            @McpToolParam(description = "Label, z.B. Interaktiv", required = true) String label,
+            @McpToolParam(description = "true = setzen, false = entfernen; leer = setzen", required = false) Boolean setzen) {
+        try {
+            if (label == null || label.isBlank()) {
+                return "FEHLER: Ohne Label gibt es nichts zu setzen.";
+            }
+            DeckKarte k = service.label(karteId, label, setzen == null || setzen);
+            return "OK: Karte " + k.getId() + " hat jetzt die Labels: "
+                    + (k.getLabels() == null ? "(keine)" : k.getLabels()) + ".";
+        } catch (IllegalArgumentException e) {
+            return "FEHLER: " + e.getMessage();
+        }
+    }
+
     @McpTool(name = "deck_verschieben",
             description = "Verschiebt eine Karte in eine andere Stapelspalte und setzt den Bearbeiter. Gültige Stapel: "
                     + "vorrat, backlog, todo, inprogress, done.")

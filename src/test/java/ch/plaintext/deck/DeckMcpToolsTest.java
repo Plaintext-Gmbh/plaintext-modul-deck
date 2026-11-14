@@ -294,4 +294,30 @@ class DeckMcpToolsTest {
         assertTrue(antwort.contains("gibt es nicht mehr"));
         verify(service, never()).beitraege(anyLong());
     }
+
+    @Test
+    @DisplayName("deck_anlegen: ohne Stapel landet die Karte im backlog, ohne Titel gibt es einen Fehler")
+    void anlegen() {
+        DeckKarte k = new DeckKarte();
+        k.setId(7L);
+        k.setStapel(DeckStapel.BACKLOG);
+        when(service.anlegen("Neu", null, DeckStapel.BACKLOG, 0, "Interaktiv")).thenReturn(k);
+
+        assertTrue(tools.anlegen("Neu", null, null, null, "Interaktiv").startsWith("OK: Karte 7 in backlog"));
+        assertTrue(tools.anlegen(" ", null, null, null, null).startsWith("FEHLER"));
+        verify(service, never()).anlegen(eq(" "), any(), any(), org.mockito.ArgumentMatchers.anyInt(), any());
+    }
+
+    @Test
+    @DisplayName("deck_label: setzt per Vorgabe, eine unbekannte Karte ergibt FEHLER")
+    void label() {
+        DeckKarte k = new DeckKarte();
+        k.setId(7L);
+        k.setLabels("Interaktiv");
+        when(service.label(7L, "Interaktiv", true)).thenReturn(k);
+        when(service.label(8L, "x", true)).thenThrow(new IllegalArgumentException("Karte 8 gibt es nicht."));
+
+        assertTrue(tools.label(7L, "Interaktiv", null).contains("Interaktiv"));
+        assertTrue(tools.label(8L, "x", true).startsWith("FEHLER: Karte 8"));
+    }
 }

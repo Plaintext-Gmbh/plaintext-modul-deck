@@ -436,6 +436,30 @@ class DeckServiceTest {
     }
 
     /** Karte im Test-Mandanten — ohne Mandat greift die Zugriffsklasse, wie sie soll. */
+    @Test
+    @DisplayName("Das Label Interaktiv schaltet die Marke Interaktiv ein und wieder aus")
+    void labelInteraktivSchaltetMarke() {
+        DeckKarte k = karte();
+        when(karten.findById(3L)).thenReturn(Optional.of(k));
+
+        service.label(3L, "interaktiv", true);
+        assertTrue(k.isInteraktiv(), "Gross-/Kleinschreibung zählt nicht");
+        service.label(3L, "dev", true);
+        assertTrue(k.isInteraktiv(), "ein anderes Label lässt die Marke stehen");
+        service.label(3L, "Interaktiv", false);
+        assertFalse(k.isInteraktiv());
+        assertEquals("dev", k.getLabels());
+    }
+
+    @Test
+    @DisplayName("Eine neue Karte mit dem Label Interaktiv trägt die Marke von Anfang an")
+    void anlegenMitInteraktiv() {
+        DeckKarte k = service.anlegen("Freigabe nötig", null, DeckStapel.TODO, 1, "dev, Interaktiv");
+        assertTrue(k.isInteraktiv());
+        DeckKarte ohne = service.anlegen("Nur Code", null, DeckStapel.TODO, 1, "dev");
+        assertFalse(ohne.isInteraktiv());
+    }
+
     private static DeckKarte karte() {
         DeckKarte k = new DeckKarte();
         k.setMandat("test");

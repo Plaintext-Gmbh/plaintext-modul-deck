@@ -131,4 +131,13 @@ class DeckBoardBackingBeanTest {
         verify(service).beitrag(4L, "daniel", "Ja, so machen.", DeckKommentar.Art.ANTWORT);
         assertNull(bean.getAntwort());
     }
+
+    @Test
+    @DisplayName("Labels fürs Board ohne Interaktiv und Rückfrage, die schon als Marke stehen")
+    void labelsOhneMarken() {
+        DeckKarte k = new DeckKarte();
+        k.setLabels("dev, Interaktiv, Rückfrage, Blockiert");
+        assertEquals(java.util.List.of("dev", "Blockiert"),
+                new DeckBoardBackingBean(org.mockito.Mockito.mock(DeckService.class)).labelsOhneMarken(k));
+    }
 }

@@ -59,7 +59,7 @@
                                     #{eintrag.key.code()} <span class="deck-anzahl">#{eintrag.value.size()}</span>
                                 </div>
                                 <ui:repeat value="#{eintrag.value}" var="k">
-                                    <div class="deck-karte deck-stapel-#{eintrag.key.code()}">
+                                    <div class="deck-karte deck-stapel-#{eintrag.key.code()}#{k.rueckfrage ? ' deck-karte-rueckfrage' : ''}#{k.interaktiv ? ' deck-karte-interaktiv' : ''}">
                                         <div class="deck-karte-streifen"></div>
                                         <div class="deck-karte-inhalt">
                                             <p:commandLink action="#{deckBoardBean.oeffnen(k.id)}"
@@ -67,12 +67,13 @@
                                                 #{k.titel}
                                             </p:commandLink>
                                             <div class="deck-karte-marken">
-                                                <span class="deck-marke deck-marke-interaktiv" rendered="#{k.interaktiv}">Interaktiv</span>
-                                                <span class="deck-marke deck-marke-rueckfrage" rendered="#{k.rueckfrage}">Rückfrage</span>
+                                                <ui:fragment rendered="#{k.interaktiv}"><span class="deck-marke deck-marke-interaktiv">Interaktiv</span></ui:fragment>
+                                                <ui:fragment rendered="#{k.rueckfrage}"><span class="deck-marke deck-marke-rueckfrage">Rückfrage</span></ui:fragment>
+                                                <ui:repeat value="#{deckBoardBean.labelsOhneMarken(k)}" var="l"><span class="deck-marke deck-marke-label">#{l}</span></ui:repeat>
                                             </div>
                                             <div class="deck-karte-meta">
                                                 <span class="deck-karte-nr">#{k.id}</span>
-                                                <span class="deck-karte-bearbeiter" rendered="#{not empty k.bearbeiter}">#{k.bearbeiter}</span>
+                                                <ui:fragment rendered="#{not empty k.bearbeiter}"><span class="deck-karte-bearbeiter">#{k.bearbeiter}</span></ui:fragment>
                                             </div>
                                         </div>
                                     </div>

@@ -101,6 +101,7 @@ public class DeckService {
         k.setStapel(stapel == null ? DeckStapel.BACKLOG : stapel);
         k.setPrio(prio);
         k.setLabels(labels);
+        k.setInteraktiv(hatLabel(labels, LABEL_INTERAKTIV));
         k.setKurzfassung(kurzfassung(beschreibung));
         k.setMandat(mandat());
         return karten.save(k);
@@ -130,8 +131,17 @@ public class DeckService {
     public DeckKarte label(long id, String label, boolean setzen) {
         DeckKarte k = karte(id).orElseThrow(() -> new IllegalArgumentException("Karte " + id + " gibt es nicht."));
         k.setLabels(labelAendern(k.getLabels(), label, setzen));
+        if (LABEL_INTERAKTIV.equalsIgnoreCase(label == null ? "" : label.trim())) {
+            k.setInteraktiv(setzen);
+        }
         return karten.save(k);
     }
+
+    /**
+     * Label, das die Marke «Interaktiv» setzt: der Mensch muss hier etwas beitragen, ohne dass eine
+     * Rückfrage offen ist. Dieselbe Schreibweise wie das Label im heutigen Deck.
+     */
+    public static final String LABEL_INTERAKTIV = "Interaktiv";
 
     static String labelAendern(String vorhanden, String label, boolean setzen) {
         String neu = label == null ? "" : label.trim();
@@ -159,6 +169,18 @@ public class DeckService {
             liste.add(neu);
         }
         return liste.isEmpty() ? null : String.join(", ", liste);
+    }
+
+    static boolean hatLabel(String labels, String label) {
+        if (labels == null) {
+            return false;
+        }
+        for (String teil : labels.split(",")) {
+            if (teil.trim().equalsIgnoreCase(label)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ── Beiträge ──────────────────────────────────────────────────────────────

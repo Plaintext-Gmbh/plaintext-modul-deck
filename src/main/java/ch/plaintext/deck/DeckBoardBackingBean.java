@@ -99,6 +99,24 @@ public class DeckBoardBackingBean implements Serializable {
         return offeneRueckfragen;
     }
 
+    /**
+     * Labels der Karte für die Anzeige, ohne «Interaktiv» und «Rückfrage»: die beiden stehen schon
+     * als eigene Marke in Signalfarbe, ein zweites graues Schild wäre Rauschen.
+     */
+    public List<String> labelsOhneMarken(DeckKarte k) {
+        List<String> liste = new java.util.ArrayList<>();
+        if (k == null || k.getLabels() == null) {
+            return liste;
+        }
+        for (String teil : k.getLabels().split(",")) {
+            String t = teil.trim();
+            if (!t.isEmpty() && !t.equalsIgnoreCase(DeckService.LABEL_INTERAKTIV) && !t.equalsIgnoreCase("Rückfrage")) {
+                liste.add(t);
+            }
+        }
+        return liste;
+    }
+
     /** Öffnet das Detail einer Karte. */
     public void oeffnen(Long karteId) {
         offeneKarte = karteId;

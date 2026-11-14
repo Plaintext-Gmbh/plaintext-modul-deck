@@ -109,6 +109,12 @@
 .deck-stapel-inprogress .deck-karte-streifen { background: #fbbf24; }
 .deck-stapel-done .deck-karte-streifen { background: #34d399; }
 
+/* Wo Daniel beitragen muss, ueberstimmt die Marke die Statusfarbe: breiter Streifen und Rahmen. */
+.deck-karte-interaktiv .deck-karte-streifen { background: #2563eb; width: 10px; flex-basis: 10px; }
+.deck-karte-interaktiv { box-shadow: 0 0 0 2px #2563eb; }
+.deck-karte-rueckfrage .deck-karte-streifen { background: #dc2626; width: 10px; flex-basis: 10px; }
+.deck-karte-rueckfrage { box-shadow: 0 0 0 2px #dc2626; }
+
 .deck-karte-inhalt {
     padding: 8px 10px 8px 0;
     flex: 1;
@@ -145,6 +151,11 @@
 .deck-marke-interaktiv {
     background: #dbeafe;
     color: #1e40af;
+}
+
+.deck-marke-label {
+    background: #f1f5f9;
+    color: #334155;
 }
 
 .deck-marke-rueckfrage {
